@@ -1,0 +1,21 @@
+resource "oci_core_subnet" "main_subnet" {
+  cidr_block        = "10.0.1.0/24"
+  compartment_id    = var.compartment_id
+  vcn_id            = oci_core_virtual_network.main_vcn.id
+  display_name      = "LuisSubnet"
+  route_table_id    = oci_core_route_table.rt.id
+  dns_label         = "subnet1"
+  prohibit_public_ip_on_vnic = false
+}
+
+resource "oci_core_route_table" "rt" {
+  compartment_id = var.compartment_id
+  vcn_id         = oci_core_virtual_network.main_vcn.id
+  display_name   = "LuisRouteTable"
+
+  route_rules {
+    network_entity_id = oci_core_internet_gateway.igw.id
+    destination       = "0.0.0.0/0"
+    destination_type  = "CIDR_BLOCK"
+  }
+}
